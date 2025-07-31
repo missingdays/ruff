@@ -38,7 +38,7 @@ pub struct Definition<'db> {
     #[no_eq]
     #[returns(ref)]
     #[tracked]
-    pub(crate) kind: DefinitionKind<'db>,
+    pub kind: DefinitionKind<'db>,
 
     /// This is a dedicated field to avoid accessing `kind` to compute this value.
     pub(crate) is_reexported: bool,

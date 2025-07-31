@@ -30,6 +30,7 @@
 mod initialize;
 mod publish_diagnostics;
 mod pull_diagnostics;
+mod provide_type;
 
 use std::collections::hash_map::Entry;
 use std::collections::{HashMap, VecDeque};
@@ -51,17 +52,7 @@ use lsp_types::request::{
     DocumentDiagnosticRequest, Initialize, Request, Shutdown, WorkspaceConfiguration,
     WorkspaceDiagnosticRequest,
 };
-use lsp_types::{
-    ClientCapabilities, ConfigurationParams, DiagnosticClientCapabilities,
-    DidChangeTextDocumentParams, DidChangeWatchedFilesClientCapabilities,
-    DidChangeWatchedFilesParams, DidCloseTextDocumentParams, DidOpenTextDocumentParams,
-    DocumentDiagnosticParams, DocumentDiagnosticReportResult, FileEvent, InitializeParams,
-    InitializeResult, InitializedParams, PartialResultParams, PreviousResultId,
-    PublishDiagnosticsClientCapabilities, TextDocumentClientCapabilities,
-    TextDocumentContentChangeEvent, TextDocumentIdentifier, TextDocumentItem, Url,
-    VersionedTextDocumentIdentifier, WorkDoneProgressParams, WorkspaceClientCapabilities,
-    WorkspaceDiagnosticParams, WorkspaceDiagnosticReportResult, WorkspaceFolder,
-};
+use lsp_types::{ClientCapabilities, ConfigurationParams, DiagnosticClientCapabilities, DidChangeTextDocumentParams, DidChangeWatchedFilesClientCapabilities, DidChangeWatchedFilesParams, DidCloseTextDocumentParams, DidOpenTextDocumentParams, DocumentDiagnosticParams, DocumentDiagnosticReportResult, FileEvent, InitializeParams, InitializeResult, InitializedParams, PartialResultParams, Position, PreviousResultId, PublishDiagnosticsClientCapabilities, Range, TextDocumentClientCapabilities, TextDocumentContentChangeEvent, TextDocumentIdentifier, TextDocumentItem, Url, VersionedTextDocumentIdentifier, WorkDoneProgressParams, WorkspaceClientCapabilities, WorkspaceDiagnosticParams, WorkspaceDiagnosticReportResult, WorkspaceFolder};
 use ruff_db::system::{OsSystem, SystemPath, SystemPathBuf, TestSystem};
 use rustc_hash::FxHashMap;
 use serde::de::DeserializeOwned;
@@ -69,6 +60,7 @@ use serde_json::json;
 use tempfile::TempDir;
 
 use ty_server::{ClientOptions, LogLevel, Server, init_logging};
+use ty_server::server::api::requests::provide_type::{ProvideTypeParams, ProvideTypeRequest, ProvideTypeResponse};
 
 /// Number of times to retry receiving a message before giving up
 const RETRY_COUNT: usize = 5;
@@ -668,6 +660,23 @@ impl TestServer {
 
         let id = self.send_request::<WorkspaceDiagnosticRequest>(params);
         self.await_response::<WorkspaceDiagnosticReportResult>(id)
+    }
+
+    /// Send a `types/provide-type` request
+    pub(crate) fn provide_type_request(
+        &mut self,
+        path: impl AsRef<SystemPath>,
+        range: Range
+    ) -> Result<ProvideTypeResponse> {
+        let params = ProvideTypeParams {
+            text_document: TextDocumentIdentifier {
+                uri: self.file_uri(path),
+            },
+            range
+        };
+
+        let id = self.send_request::<ProvideTypeRequest>(params);
+        self.await_response::<ProvideTypeResponse>(id)
     }
 }
 

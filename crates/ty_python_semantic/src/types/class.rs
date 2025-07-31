@@ -324,7 +324,7 @@ impl<'db> ClassType<'db> {
         }
     }
 
-    pub(crate) fn name(self, db: &'db dyn Db) -> &'db ast::name::Name {
+    pub fn name(self, db: &'db dyn Db) -> &'db ast::name::Name {
         let (class_literal, _) = self.class_literal(db);
         class_literal.name(db)
     }
@@ -1084,7 +1084,7 @@ pub(crate) struct DataclassField<'db> {
 pub struct ClassLiteral<'db> {
     /// Name of the class at definition
     #[returns(ref)]
-    pub(crate) name: ast::name::Name,
+    pub name: ast::name::Name,
 
     pub(crate) body_scope: ScopeId<'db>,
 

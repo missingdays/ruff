@@ -11,7 +11,7 @@ use std::fmt::Formatter;
 ///
 /// ## Panics
 /// Panics if `range` is not contained within `root`.
-pub(crate) fn covering_node(root: AnyNodeRef, range: TextRange) -> CoveringNode {
+pub fn covering_node(root: AnyNodeRef, range: TextRange) -> CoveringNode {
     struct Visitor<'a> {
         range: TextRange,
         found: bool,
@@ -56,7 +56,7 @@ pub(crate) fn covering_node(root: AnyNodeRef, range: TextRange) -> CoveringNode 
 }
 
 /// The node with a minimal range that fully contains the search range.
-pub(crate) struct CoveringNode<'a> {
+pub struct CoveringNode<'a> {
     /// The covering node, along with all of its ancestors up to the
     /// root. The root is always the first element and the covering
     /// node found is always the last node. This sequence is guaranteed
@@ -72,7 +72,7 @@ impl<'a> CoveringNode<'a> {
     }
 
     /// Returns the covering node found.
-    pub(crate) fn node(&self) -> AnyNodeRef<'a> {
+    pub fn node(&self) -> AnyNodeRef<'a> {
         *self
             .nodes
             .last()
@@ -90,7 +90,7 @@ impl<'a> CoveringNode<'a> {
     ///
     /// The "first" here means that the node closest to a leaf is
     /// returned.
-    pub(crate) fn find_first(mut self, f: impl Fn(AnyNodeRef<'a>) -> bool) -> Result<Self, Self> {
+    pub fn find_first(mut self, f: impl Fn(AnyNodeRef<'a>) -> bool) -> Result<Self, Self> {
         let Some(index) = self.find_first_index(f) else {
             return Err(self);
         };
@@ -118,7 +118,7 @@ impl<'a> CoveringNode<'a> {
 
     /// Returns an iterator over the ancestor nodes, starting from the root
     /// and ending with the covering node.
-    pub(crate) fn ancestors(&self) -> impl Iterator<Item = AnyNodeRef<'a>> + '_ {
+    pub fn ancestors(&self) -> impl Iterator<Item = AnyNodeRef<'a>> + '_ {
         self.nodes.iter().copied()
     }
 
