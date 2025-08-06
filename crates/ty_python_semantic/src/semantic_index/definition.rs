@@ -48,7 +48,7 @@ pub struct Definition<'db> {
 impl get_size2::GetSize for Definition<'_> {}
 
 impl<'db> Definition<'db> {
-    pub(crate) fn scope(self, db: &'db dyn Db) -> ScopeId<'db> {
+    pub fn scope(self, db: &'db dyn Db) -> ScopeId<'db> {
         self.file_scope(db).to_scope_id(db, self.file(db))
     }
 

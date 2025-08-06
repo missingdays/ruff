@@ -334,7 +334,7 @@ impl<'db> ClassType<'db> {
         class_literal.known(db)
     }
 
-    pub(crate) fn definition(self, db: &'db dyn Db) -> Definition<'db> {
+    pub fn definition(self, db: &'db dyn Db) -> Definition<'db> {
         let (class_literal, _) = self.class_literal(db);
         class_literal.definition(db)
     }
@@ -1198,14 +1198,14 @@ impl<'db> ClassLiteral<'db> {
         scope.node(db).expect_class(module)
     }
 
-    pub(crate) fn definition(self, db: &'db dyn Db) -> Definition<'db> {
+    pub fn definition(self, db: &'db dyn Db) -> Definition<'db> {
         let body_scope = self.body_scope(db);
         let module = parsed_module(db, body_scope.file(db)).load(db);
         let index = semantic_index(db, body_scope.file(db));
         index.expect_single_definition(body_scope.node(db).expect_class(&module))
     }
 
-    pub(crate) fn apply_specialization(
+    pub fn apply_specialization(
         self,
         db: &'db dyn Db,
         f: impl FnOnce(GenericContext<'db>) -> Specialization<'db>,
@@ -3440,7 +3440,7 @@ impl KnownClass {
     }
 
     /// Return the module in which we should look up the definition for this class
-    fn canonical_module(self, db: &dyn Db) -> KnownModule {
+    pub fn canonical_module(self, db: &dyn Db) -> KnownModule {
         match self {
             Self::Bool
             | Self::Object
