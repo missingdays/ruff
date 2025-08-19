@@ -1,8 +1,10 @@
 ---
 source: crates/ty_server/tests/e2e/provide_type.rs
-assertion_line: 31
+assertion_line: 33
 expression: provide_type_response
 ---
-ProvideTypeResponse {
-    ty: "C",
-}
+Some(
+    ProvideTypeResponse {
+        ty: "C",
+    },
+)

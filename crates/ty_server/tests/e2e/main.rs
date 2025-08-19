@@ -747,7 +747,7 @@ impl TestServer {
         &mut self,
         path: impl AsRef<SystemPath>,
         range: Range
-    ) -> Result<ProvideTypeResponse> {
+    ) -> Result<Option<ProvideTypeResponse>> {
         let params = ProvideTypeParams {
             text_document: TextDocumentIdentifier {
                 uri: self.file_uri(path),
@@ -756,7 +756,7 @@ impl TestServer {
         };
 
         let id = self.send_request::<ProvideTypeRequest>(params);
-        self.await_response::<ProvideTypeResponse>(id)
+        self.await_response::<ProvideTypeRequest>(&id)
     }
 }
 

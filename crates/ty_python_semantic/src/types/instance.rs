@@ -105,7 +105,7 @@ pub(super) fn walk_nominal_instance_type<'db, V: super::visitor::TypeVisitor<'db
 }
 
 impl<'db> NominalInstanceType<'db> {
-    pub(super) fn class(&self, db: &'db dyn Db) -> ClassType<'db> {
+    pub fn class(&self, db: &'db dyn Db) -> ClassType<'db> {
         match self.0 {
             NominalInstanceInner::ExactTuple(tuple) => tuple.to_class_type(db),
             NominalInstanceInner::NonTuple(class) => class,

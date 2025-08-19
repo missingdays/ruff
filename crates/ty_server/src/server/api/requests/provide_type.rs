@@ -13,7 +13,6 @@ use ruff_db::source::{line_index, source_text};
 use ruff_python_ast::AnyNodeRef;
 use serde::{Deserialize, Serialize};
 use ty_project::ProjectDatabase;
-use ty_project::combine::Combine;
 use ty_python_semantic::types::Type;
 use ty_python_semantic::{HasType, SemanticModel};
 
@@ -56,14 +55,10 @@ impl BackgroundDocumentRequestHandler for ProvideTypeRequestHandler {
 
     fn run_with_snapshot(
         db: &ProjectDatabase,
-        snapshot: DocumentSnapshot,
+        snapshot: &DocumentSnapshot,
         _client: &Client,
         params: ProvideTypeParams,
     ) -> crate::server::Result<Option<ProvideTypeResponse>> {
-        if snapshot.client_settings().is_language_services_disabled() {
-            return Ok(None);
-        }
-
         let Some(file) = snapshot.file(db) else {
             return Ok(None);
         };
@@ -169,13 +164,13 @@ impl BackgroundDocumentRequestHandler for ProvideTypeRequestHandler {
                 }
             }
             Type::NominalInstance(instance) => {
-                let name = qualified_name_from_definition(db, instance.class.definition(db));
+                let name = qualified_name_from_definition(db, instance.class(db).definition(db));
                 match name {
                     None => {
-                        instance.class.name(db).to_string()
+                        instance.class(db).name(db).to_string()
                     }
                     Some(n) => {
-                        format!("{}.{}", n, instance.class.name(db).to_string())
+                        format!("{}.{}", n, instance.class(db).name(db).to_string())
                     }
                 }
             }

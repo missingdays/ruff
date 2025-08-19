@@ -15,7 +15,7 @@ def foo() -> C:
 ";
 
     let mut server = TestServerBuilder::new()?
-        .with_workspace(workspace_root, ClientOptions::default())?
+        .with_workspace(workspace_root, Some(ClientOptions::default()))?
         .with_file(foo, foo_content)?
         .enable_pull_diagnostics(true)
         .build()?
@@ -49,7 +49,7 @@ b
 ";
 
     let mut server = TestServerBuilder::new()?
-        .with_workspace(workspace_root, ClientOptions::default())?
+        .with_workspace(workspace_root, Some(ClientOptions::default()))?
         .with_file(foo, foo_content)?
         .enable_pull_diagnostics(true)
         .build()?
