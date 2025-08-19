@@ -5,6 +5,6 @@ expression: provide_type_response
 ---
 Some(
     ProvideTypeResponse {
-        ty: "A.B",
+        ty: "foo.A.B",
     },
 )

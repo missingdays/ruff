@@ -115,69 +115,7 @@ impl BackgroundDocumentRequestHandler for ProvideTypeRequestHandler {
             _ => return Ok(None),
         };
 
-        fn qualified_name_from_definition(
-            db: &ProjectDatabase,
-            definition: ty_python_semantic::semantic_index::definition::Definition,
-        ) -> Option<String> {
-            use ty_python_semantic::semantic_index::scope::ScopeKind;
-
-            let file = definition.file(db);
-            let module = parsed_module(db, file).load(db);
-            let mut names: Vec<String> = Vec::new();
-            let mut current = definition.scope(db);
-            loop {
-                let scope = current.scope(db);
-                match scope.kind() {
-                    ScopeKind::Class => {
-                        let name = current.name(db, &module).to_string();
-                        names.push(name);
-                    }
-                    ScopeKind::Module => {
-                        break;
-                    }
-                    _ => {}
-                }
-                if let Some(parent) = scope.parent() {
-                    current = parent.to_scope_id(db, file);
-                } else {
-                    break;
-                }
-            }
-            names.reverse();
-            if names.is_empty() {
-                None
-            } else {
-                Some(names.join("."))
-            }
-        }
-
-        let ty_name: String = match ty {
-            Type::ClassLiteral(class) => {
-                let name = qualified_name_from_definition(db, class.definition(db));
-                match name {
-                    None => {
-                        class.name(db).to_string()
-                    }
-                    Some(n) => {
-                        format!("{}.{}", n, class.name(db).to_string())
-                    }
-                }
-            }
-            Type::NominalInstance(instance) => {
-                let name = qualified_name_from_definition(db, instance.class(db).definition(db));
-                match name {
-                    None => {
-                        instance.class(db).name(db).to_string()
-                    }
-                    Some(n) => {
-                        format!("{}.{}", n, instance.class(db).name(db).to_string())
-                    }
-                }
-            }
-            Type::StringLiteral(_) => "str".to_string(),
-            Type::Dynamic(_) => "typing.Any".to_string(),
-            _ => return Ok(None),
-        };
+        let ty_name = ty.qualified_display(db).to_string();
 
         Ok(Some(ProvideTypeResponse { ty: ty_name }))
     }
