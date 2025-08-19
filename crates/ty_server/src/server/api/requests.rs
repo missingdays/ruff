@@ -17,6 +17,7 @@ mod shutdown;
 mod signature_help;
 mod workspace_diagnostic;
 mod workspace_symbols;
+pub mod provide_type;
 
 pub(super) use completion::CompletionRequestHandler;
 pub(super) use diagnostic::DocumentDiagnosticRequestHandler;

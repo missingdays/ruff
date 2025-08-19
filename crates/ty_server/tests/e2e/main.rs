@@ -31,6 +31,7 @@ mod initialize;
 mod inlay_hints;
 mod publish_diagnostics;
 mod pull_diagnostics;
+mod provide_type;
 
 use std::collections::hash_map::Entry;
 use std::collections::{HashMap, VecDeque};
@@ -52,24 +53,20 @@ use lsp_types::request::{
     DocumentDiagnosticRequest, HoverRequest, Initialize, InlayHintRequest, Request, Shutdown,
     WorkspaceConfiguration, WorkspaceDiagnosticRequest,
 };
-use lsp_types::{
-    ClientCapabilities, ConfigurationParams, DiagnosticClientCapabilities,
-    DidChangeTextDocumentParams, DidChangeWatchedFilesClientCapabilities,
-    DidChangeWatchedFilesParams, DidCloseTextDocumentParams, DidOpenTextDocumentParams,
-    DocumentDiagnosticParams, DocumentDiagnosticReportResult, FileEvent, Hover, HoverParams,
+use lsp_types::{ClientCapabilities, ConfigurationParams, DiagnosticClientCapabilities, DidChangeTextDocumentParams, DidChangeWatchedFilesClientCapabilities, DidChangeWatchedFilesParams, DidCloseTextDocumentParams, DidOpenTextDocumentParams, DocumentDiagnosticParams, DocumentDiagnosticReportResult, FileEvent, Hover, HoverParams,
     InitializeParams, InitializeResult, InitializedParams, InlayHint, InlayHintClientCapabilities,
     InlayHintParams, NumberOrString, PartialResultParams, Position, PreviousResultId,
     PublishDiagnosticsClientCapabilities, Range, TextDocumentClientCapabilities,
     TextDocumentContentChangeEvent, TextDocumentIdentifier, TextDocumentItem,
     TextDocumentPositionParams, Url, VersionedTextDocumentIdentifier, WorkDoneProgressParams,
     WorkspaceClientCapabilities, WorkspaceDiagnosticParams, WorkspaceDiagnosticReportResult,
-    WorkspaceFolder,
-};
+    WorkspaceFolder};
 use ruff_db::system::{OsSystem, SystemPath, SystemPathBuf, TestSystem};
 use rustc_hash::FxHashMap;
 use tempfile::TempDir;
 
 use ty_server::{ClientOptions, LogLevel, Server, init_logging};
+use ty_server::server::api::requests::provide_type::{ProvideTypeParams, ProvideTypeRequest, ProvideTypeResponse};
 
 /// Number of times to retry receiving a message before giving up
 const RETRY_COUNT: usize = 5;
@@ -743,6 +740,23 @@ impl TestServer {
         };
         let id = self.send_request::<InlayHintRequest>(params);
         self.await_response::<InlayHintRequest>(&id)
+    }
+
+    /// Send a `types/provide-type` request
+    pub(crate) fn provide_type_request(
+        &mut self,
+        path: impl AsRef<SystemPath>,
+        range: Range
+    ) -> Result<ProvideTypeResponse> {
+        let params = ProvideTypeParams {
+            text_document: TextDocumentIdentifier {
+                uri: self.file_uri(path),
+            },
+            range
+        };
+
+        let id = self.send_request::<ProvideTypeRequest>(params);
+        self.await_response::<ProvideTypeResponse>(id)
     }
 }
 

@@ -39,7 +39,7 @@ pub mod place;
 pub(crate) mod predicate;
 mod re_exports;
 mod reachability_constraints;
-pub(crate) mod scope;
+pub mod scope;
 pub(crate) mod symbol;
 mod use_def;
 

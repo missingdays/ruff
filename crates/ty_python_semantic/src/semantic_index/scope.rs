@@ -37,12 +37,11 @@ impl<'db> ScopeId<'db> {
         self.scope(db).node()
     }
 
-    pub(crate) fn scope(self, db: &dyn Db) -> &Scope {
+    pub fn scope(self, db: &dyn Db) -> &Scope {
         semantic_index(db, self.file(db)).scope(self.file_scope_id(db))
     }
 
-    #[cfg(test)]
-    pub(crate) fn name<'ast>(self, db: &'db dyn Db, module: &'ast ParsedModuleRef) -> &'ast str {
+    pub fn name<'ast>(self, db: &'db dyn Db, module: &'ast ParsedModuleRef) -> &'ast str {
         match self.node(db) {
             NodeWithScopeKind::Module => "<module>",
             NodeWithScopeKind::Class(class) | NodeWithScopeKind::ClassTypeParameters(class) => {
@@ -94,7 +93,7 @@ impl FileScopeId {
 }
 
 #[derive(Debug, salsa::Update, get_size2::GetSize)]
-pub(crate) struct Scope {
+pub struct Scope {
     /// The parent scope, if any.
     parent: Option<FileScopeId>,
 
@@ -128,7 +127,7 @@ impl Scope {
         }
     }
 
-    pub(crate) fn parent(&self) -> Option<FileScopeId> {
+    pub fn parent(&self) -> Option<FileScopeId> {
         self.parent
     }
 
@@ -136,7 +135,7 @@ impl Scope {
         &self.node
     }
 
-    pub(crate) fn kind(&self) -> ScopeKind {
+    pub fn kind(&self) -> ScopeKind {
         self.node().scope_kind()
     }
 
@@ -198,7 +197,7 @@ impl ScopeLaziness {
 }
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
-pub(crate) enum ScopeKind {
+pub enum ScopeKind {
     Module,
     Annotation,
     Class,

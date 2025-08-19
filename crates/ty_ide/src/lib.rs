@@ -2,7 +2,7 @@ mod completion;
 mod doc_highlights;
 mod docstring;
 mod document_symbols;
-mod find_node;
+pub mod find_node;
 mod goto;
 mod goto_declaration;
 mod goto_definition;

@@ -13,9 +13,10 @@ pub(crate) use session::{DocumentQuery, Session};
 mod capabilities;
 mod document;
 mod logging;
-mod server;
+pub mod server;
 mod session;
 mod system;
+
 
 pub(crate) const SERVER_NAME: &str = "ty";
 pub(crate) const DIAGNOSTIC_NAME: &str = "ty";
