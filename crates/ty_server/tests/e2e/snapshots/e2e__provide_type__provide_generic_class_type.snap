@@ -1,0 +1,10 @@
+---
+source: crates/ty_server/tests/e2e/provide_type.rs
+assertion_line: 103
+expression: provide_type_response
+---
+Some(
+    ProvideTypeResponse {
+        ty: "foo.A[int]",
+    },
+)
