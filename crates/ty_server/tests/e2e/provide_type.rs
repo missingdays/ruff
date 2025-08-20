@@ -80,7 +80,10 @@ class A[T]:
     def __init__(self, i: T):
         self.i = i
 
-a = A(1)
+class B:
+    pass
+
+a = A(B())
 a
 ";
 
@@ -95,8 +98,8 @@ a
     let provide_type_response = server.provide_type_request(
         foo,
         Range::new(
-            Position::new(6, 0),
-            Position::new(6, 1)
+            Position::new(9, 0),
+            Position::new(9, 1)
         )
     )?;
 

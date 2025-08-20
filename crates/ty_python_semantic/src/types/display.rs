@@ -699,7 +699,7 @@ impl Display for DisplaySpecialization<'_> {
             if idx > 0 {
                 f.write_str(", ")?;
             }
-            ty.display(self.db).fmt(f)?;
+            ty.qualified_display(self.db).fmt(f)?;
         }
         if self.tuple_specialization.is_yes() {
             f.write_str(", ...")?;
